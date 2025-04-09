@@ -1,37 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
-// Generate stable particle data outside the component
-const generateStableParticles = () => {
-  // Use seed values instead of random numbers
-  const seeds = [
-    { width: 84, height: 109, top: 48, left: 56, delay: 5.2, duration: 14.7, opacity: 0.15, color: "primary" },
-    { width: 64, height: 72, top: 98, left: 45, delay: 4.8, duration: 12.3, opacity: 0.09, color: "secondary" },
-    { width: 110, height: 85, top: 69, left: 50, delay: 5.8, duration: 22.4, opacity: 0.15, color: "primary" },
-    { width: 65, height: 105, top: 11, left: 13, delay: 0.6, duration: 10.5, opacity: 0.12, color: "secondary" },
-    { width: 111, height: 93, top: 31, left: 95, delay: 8.0, duration: 11.2, opacity: 0.07, color: "primary" },
-    { width: 36, height: 119, top: 86, left: 41, delay: 4.4, duration: 15.4, opacity: 0.15, color: "secondary" },
-    { width: 31, height: 91, top: 28, left: 71, delay: 6.2, duration: 23.6, opacity: 0.11, color: "primary" },
-    { width: 100, height: 48, top: 95, left: 81, delay: 8.3, duration: 23.4, opacity: 0.15, color: "secondary" },
-    { width: 106, height: 32, top: 7, left: 26, delay: 3.5, duration: 29.3, opacity: 0.09, color: "primary" },
-    { width: 27, height: 73, top: 43, left: 36, delay: 8.6, duration: 21.8, opacity: 0.12, color: "secondary" },
-    { width: 112, height: 107, top: 31, left: 8, delay: 6.0, duration: 22.4, opacity: 0.08, color: "primary" },
-    { width: 91, height: 36, top: 66, left: 30, delay: 8.5, duration: 27.0, opacity: 0.15, color: "secondary" },
-    { width: 28, height: 82, top: 62, left: 26, delay: 5.9, duration: 18.8, opacity: 0.11, color: "primary" },
-    { width: 33, height: 83, top: 50, left: 59, delay: 5.3, duration: 12.8, opacity: 0.14, color: "secondary" },
-    { width: 101, height: 111, top: 33, left: 63, delay: 5.3, duration: 18.9, opacity: 0.09, color: "primary" },
-    { width: 72, height: 62, top: 71, left: 38, delay: 4.7, duration: 11.4, opacity: 0.20, color: "secondary" },
-    { width: 68, height: 29, top: 52, left: 72, delay: 9.7, duration: 18.1, opacity: 0.15, color: "primary" },
-    { width: 81, height: 83, top: 29, left: 86, delay: 9.0, duration: 25.5, opacity: 0.11, color: "secondary" },
-    { width: 92, height: 80, top: 14, left: 33, delay: 3.6, duration: 27.9, opacity: 0.09, color: "primary" },
-    { width: 109, height: 111, top: 7, left: 34, delay: 7.3, duration: 27.0, opacity: 0.15, color: "secondary" }
-  ];
-  return seeds;
-};
-
-// Create the particles array outside the component
-const particles = generateStableParticles();
+import { useState } from "react";
 
 export default function Home() {
   const [prompt, setPrompt] = useState("");
@@ -41,6 +10,18 @@ export default function Home() {
     suggestions: string[];
     improvements: string[];
   } | null>(null);
+
+  // Example prompts that users can quickly use
+  const examplePrompts = [
+    "Tell me about quantum computing",
+    "How to make a perfect sourdough bread",
+    "Explain the impact of AI on modern healthcare",
+    "Compare renewable energy sources"
+  ];
+
+  const handleExampleClick = (example: string) => {
+    setPrompt(example);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,105 +48,288 @@ export default function Home() {
     }, 1500);
   };
 
+  const handleReset = () => {
+    setPrompt("");
+    setResult(null);
+  };
+
   return (
-    <main className="relative container mx-auto min-h-screen px-4 py-12 max-w-6xl">
-      {/* Hero Section */}
-      <div className="flex flex-col items-center justify-center text-center mb-12 pt-8">
-        <div className="relative mb-8">
-          <h1 className="text-5xl md:text-7xl font-bold text-slate-900 dark:text-white relative z-10 font-display">
-            Refine your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">Words</span>
-          </h1>
-        </div>
-        <p className="text-xl text-slate-600 dark:text-slate-300 max-w-2xl relative">
-          <span className="relative z-10">Elevate your AI interactions with expert prompt engineering guidance.
-            Write better prompts, get better results.</span>
-          <span className="absolute w-full h-1 bg-gradient-to-r from-primary-300/50 to-secondary-300/50 bottom-0 left-0 rounded-full"></span>
-        </p>
-      </div>
-
-      {/* Main Content */}
-      <div className="relative bg-white/70 dark:bg-slate-800/70 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/20 p-6 md:p-8 lg:p-10 mt-8 max-w-4xl mx-auto overflow-hidden">
-        <div className="mb-8 relative">
-          <h2 className="text-2xl font-bold mb-2 text-slate-900 dark:text-white font-display">Prompt Engineering Assistant</h2>
-          <p className="text-slate-600 dark:text-slate-300 max-w-3xl">
-            Enter your prompt below and our AI will help you improve it for better results.
-          </p>
-          <div className="absolute h-1 w-32 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full -bottom-2 left-0"></div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-          <div>
-            <textarea
-              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 px-4 py-3 text-slate-900 dark:text-white shadow-sm placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 transition-all duration-300 min-h-[150px]"
-              placeholder="Enter your prompt here... (e.g., 'Tell me about quantum computing')"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              rows={6}
-            />
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900">
+      {/* Header */}
+      <header className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center">
+            <h1 className="text-xl font-bold text-slate-900 dark:text-white font-display">
+              Refine your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">Words</span>
+            </h1>
           </div>
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              disabled={!prompt.trim() || isLoading}
-              className="bg-gradient-to-r from-primary-600 to-primary-500 text-white hover:from-primary-500 hover:to-primary-400 px-6 py-3 rounded-xl font-medium shadow-lg shadow-primary-500/20 hover:shadow-xl hover:shadow-primary-500/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
-            >
-              {isLoading ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          <nav className="hidden sm:flex space-x-6">
+            <a href="#" className="text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400">Home</a>
+            <a href="#features" className="text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400">Features</a>
+            <a href="#examples" className="text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400">Examples</a>
+            <a href="https://github.com/your-username/refine-your-words" className="text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400">GitHub</a>
+          </nav>
+        </div>
+      </header>
+
+      <main className="flex-grow">
+        {/* Hero Section */}
+        <section className="container mx-auto px-4 py-16 flex flex-col items-center">
+          <div className="max-w-4xl text-center">
+            <h1 className="text-4xl md:text-6xl font-bold text-slate-900 dark:text-white mb-6 font-display leading-tight">
+              Refine your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600">Words</span> for
+              better AI results
+            </h1>
+            <p className="text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-10">
+              Elevate your AI interactions with expert prompt engineering guidance.
+              Write better prompts, get better results.
+            </p>
+            <div className="flex justify-center space-x-4">
+              <a
+                href="#prompt-builder"
+                className="bg-primary-600 text-white hover:bg-primary-700 px-8 py-3 rounded-lg font-medium shadow-md transition-colors"
+              >
+                Get Started
+              </a>
+              <a
+                href="#examples"
+                className="bg-white dark:bg-slate-800 text-slate-800 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 px-6 py-3 rounded-lg font-medium shadow-sm transition-colors"
+              >
+                See Examples
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section id="features" className="bg-white dark:bg-slate-800 py-16">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-12 text-slate-900 dark:text-white font-display">
+              Why Refine Your Prompts?
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="bg-slate-50 dark:bg-slate-700 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-600">
+                <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
-                  <span>Refining...</span>
-                </span>
-              ) : (
-                "Refine My Prompt"
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">Better Results</h3>
+                <p className="text-slate-600 dark:text-slate-300">Get more accurate, relevant, and useful responses from AI systems with properly engineered prompts.</p>
+              </div>
+
+              <div className="bg-slate-50 dark:bg-slate-700 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-600">
+                <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">Learn Best Practices</h3>
+                <p className="text-slate-600 dark:text-slate-300">Understand the techniques that experts use to craft effective prompts for AI tools.</p>
+              </div>
+
+              <div className="bg-slate-50 dark:bg-slate-700 p-6 rounded-xl shadow-sm border border-slate-200 dark:border-slate-600">
+                <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">Save Time</h3>
+                <p className="text-slate-600 dark:text-slate-300">Reduce back-and-forth iterations with AI systems by getting the right response the first time.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Example Prompts Section */}
+        <section id="examples" className="py-16">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-6 text-slate-900 dark:text-white font-display">
+              Example Prompts
+            </h2>
+            <p className="text-center text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-10">
+              Not sure where to start? Try one of these example prompts or use them as inspiration.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+              {examplePrompts.map((example, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleExampleClick(example)}
+                  className="text-left p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:shadow-md hover:border-primary-300 dark:hover:border-primary-700 transition-all"
+                >
+                  <p className="text-slate-900 dark:text-white truncate">{example}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">Click to use this prompt</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Prompt Builder Section */}
+        <section id="prompt-builder" className="py-10 bg-white dark:bg-slate-800">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <div className="mb-8">
+                <h2 className="text-3xl font-bold mb-4 text-slate-900 dark:text-white font-display">Prompt Engineering Assistant</h2>
+                <p className="text-slate-600 dark:text-slate-300">
+                  Enter your prompt below and our AI will help you improve it for better results.
+                </p>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="bg-slate-50 dark:bg-slate-700 p-4 rounded-xl border border-slate-200 dark:border-slate-600">
+                  <label htmlFor="prompt" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Your Prompt</label>
+                  <textarea
+                    id="prompt"
+                    className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-4 py-3 text-slate-900 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500/50 min-h-[150px]"
+                    placeholder="Enter your prompt here... (e.g., 'Tell me about quantum computing')"
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}
+                    rows={6}
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-3">
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                  >
+                    Clear
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={!prompt.trim() || isLoading}
+                    className="bg-primary-600 text-white hover:bg-primary-700 px-6 py-2 rounded-lg font-medium shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {isLoading ? (
+                      <span className="flex items-center">
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span>Refining...</span>
+                      </span>
+                    ) : (
+                      "Refine My Prompt"
+                    )}
+                  </button>
+                </div>
+              </form>
+
+              {result && (
+                <div className="mt-10 space-y-8">
+                  <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+                    <div className="bg-slate-100 dark:bg-slate-800 px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+                      <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Results</h3>
+                    </div>
+
+                    <div className="p-6 bg-white dark:bg-slate-800/50">
+                      <div className="mb-8">
+                        <h4 className="text-md font-semibold text-primary-700 dark:text-primary-400 mb-2">Refined Prompt</h4>
+                        <div className="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg border border-slate-200 dark:border-slate-600">
+                          <p className="text-slate-900 dark:text-white">{result.refinedPrompt}</p>
+                        </div>
+                        <div className="mt-3 flex">
+                          <button
+                            className="text-primary-600 text-sm flex items-center hover:text-primary-700"
+                            onClick={() => {
+                              navigator.clipboard.writeText(result.refinedPrompt);
+                            }}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                            Copy to clipboard
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <h4 className="text-md font-semibold text-amber-700 dark:text-amber-400 mb-3">Suggestions</h4>
+                          <ul className="space-y-2">
+                            {result.suggestions.map((suggestion, i) => (
+                              <li key={i} className="bg-slate-50 dark:bg-slate-700 p-3 rounded-lg border border-slate-200 dark:border-slate-600 flex items-start">
+                                <span className="text-amber-500 mr-2 mt-0.5">•</span>
+                                <span className="text-slate-700 dark:text-slate-300">{suggestion}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div>
+                          <h4 className="text-md font-semibold text-secondary-700 dark:text-secondary-400 mb-3">Improvements Made</h4>
+                          <ul className="space-y-2">
+                            {result.improvements.map((improvement, i) => (
+                              <li key={i} className="bg-slate-50 dark:bg-slate-700 p-3 rounded-lg border border-slate-200 dark:border-slate-600 flex items-start">
+                                <span className="text-secondary-500 mr-2 mt-0.5">✓</span>
+                                <span className="text-slate-700 dark:text-slate-300">{improvement}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+
+                      <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
+                        <h4 className="text-md font-semibold text-slate-900 dark:text-white mb-4">What's Next?</h4>
+                        <div className="flex flex-wrap gap-3">
+                          <button
+                            className="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                            onClick={() => setPrompt(result.refinedPrompt)}
+                          >
+                            Use Refined Prompt
+                          </button>
+                          <button
+                            className="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                          >
+                            Save Prompt
+                          </button>
+                          <button
+                            className="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                            onClick={handleReset}
+                          >
+                            Start Over
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               )}
-            </button>
-          </div>
-        </form>
-
-        {result && (
-          <div className="mt-10 space-y-8 text-left relative z-10">
-            <div className="rounded-xl bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/10 p-6 border border-primary-200 dark:border-primary-800/30 shadow-md">
-              <h3 className="text-xl font-bold text-primary-700 dark:text-primary-300 mb-3 font-display">Refined Prompt</h3>
-              <div className="bg-white/80 dark:bg-slate-800/80 p-4 rounded-lg border border-primary-200 dark:border-primary-800/30 shadow-sm backdrop-blur-sm">
-                <p className="text-slate-900 dark:text-white">{result.refinedPrompt}</p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="rounded-xl bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/10 p-6 border border-amber-200 dark:border-amber-800/30 shadow-md">
-                <h3 className="text-xl font-bold text-amber-700 dark:text-amber-300 mb-3 font-display">Suggestions</h3>
-                <ul className="space-y-3">
-                  {result.suggestions.map((suggestion, i) => (
-                    <li key={i} className="flex items-start bg-white/80 dark:bg-slate-800/80 p-2 px-3 rounded-lg border border-amber-200/50 dark:border-amber-800/20 backdrop-blur-sm">
-                      <span className="text-amber-500 mr-2 mt-0.5">•</span>
-                      <span className="text-slate-700 dark:text-slate-300">{suggestion}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="rounded-xl bg-gradient-to-br from-secondary-50 to-secondary-100 dark:from-secondary-900/20 dark:to-secondary-800/10 p-6 border border-secondary-200 dark:border-secondary-800/30 shadow-md">
-                <h3 className="text-xl font-bold text-secondary-700 dark:text-secondary-300 mb-3 font-display">Improvements</h3>
-                <ul className="space-y-3">
-                  {result.improvements.map((improvement, i) => (
-                    <li key={i} className="flex items-start bg-white/80 dark:bg-slate-800/80 p-2 px-3 rounded-lg border border-secondary-200/50 dark:border-secondary-800/20 backdrop-blur-sm">
-                      <span className="text-secondary-500 mr-2 mt-0.5">✓</span>
-                      <span className="text-slate-700 dark:text-slate-300">{improvement}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
             </div>
           </div>
-        )}
-      </div>
+        </section>
+      </main>
 
       {/* Footer */}
-      <footer className="mt-20 text-center text-sm text-slate-500 dark:text-slate-400 py-4">
-        <p>Crafted with 💙 for better AI interactions</p>
+      <footer className="bg-slate-100 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-8">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="mb-4 md:mb-0">
+              <p className="text-slate-600 dark:text-slate-400">
+                © 2024 Refine your Words. All rights reserved.
+              </p>
+            </div>
+            <div className="flex space-x-6">
+              <a href="#" className="text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400">
+                About
+              </a>
+              <a href="#" className="text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400">
+                Privacy
+              </a>
+              <a href="#" className="text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400">
+                Terms
+              </a>
+              <a href="https://github.com/your-username/refine-your-words" className="text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400">
+                GitHub
+              </a>
+            </div>
+          </div>
+        </div>
       </footer>
-    </main>
+    </div>
   );
 }
